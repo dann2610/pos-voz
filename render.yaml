@@ -1,0 +1,45 @@
+# Blueprint de Render: un servicio web (API + interfaz compilada) y una base PostgreSQL.
+# En Render: New + → Blueprint → elige este repositorio. Te pedirá ADMIN_PASSWORD y VENDEDOR_PASSWORD.
+databases:
+  - name: pos-voz-db
+    plan: free
+    databaseName: pos_voz
+    user: pos
+
+services:
+  - type: web
+    name: pos-voz
+    runtime: node
+    plan: free
+    buildCommand: cd frontend && npm ci --include=dev && npm run build && cd ../backend && npm ci --omit=dev
+    startCommand: cd backend && npm run start:render
+    healthCheckPath: /api/salud
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: SERVE_FRONTEND
+        value: "true"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: APP_TIMEZONE
+        value: America/Guayaquil
+      - key: JWT_EXPIRES_IN
+        value: 8h
+      - key: BCRYPT_ROUNDS
+        value: "12"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pos-voz-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@posvoz.com
+      - key: VENDEDOR_EMAIL
+        value: vendedor@posvoz.com
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: VENDEDOR_PASSWORD
+        sync: false

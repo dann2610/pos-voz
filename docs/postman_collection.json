@@ -1,0 +1,447 @@
+{
+  "info": {
+    "name": "POS por voz — API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Ejecuta primero \"Login administrador\". Variables: baseUrl (http://localhost:4000/api) y token (se llena sola)."
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:4000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "idPedido",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Login administrador",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"admin@demo.com\",\n  \"contrasena\": \"<DEMO_ADMIN_PASSWORD de tu .env>\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const r = pm.response.json();",
+              "pm.test('Login correcto', () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('token', r.token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login vendedor",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"correo\": \"vendedor@demo.com\",\n  \"contrasena\": \"<DEMO_VENDEDOR_PASSWORD de tu .env>\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const r = pm.response.json();",
+              "pm.test('Login correcto', () => pm.response.to.have.status(200));",
+              "pm.collectionVariables.set('token', r.token);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Mi sesión",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/auth/me",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "me"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Dashboard",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/dashboard",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "dashboard"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Listar productos",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/productos?q=coca",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "productos?q=coca"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Crear producto (admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/productos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "productos"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Producto de prueba\",\n  \"descripcion\": \"Unidad\",\n  \"precio\": 1.25,\n  \"stock\": 10,\n  \"stock_minimo\": 3,\n  \"id_categoria\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "Movimiento de inventario (admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/inventario/movimientos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "inventario",
+            "movimientos"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tipo_movimiento\": \"entrada\",\n  \"id_producto\": 1,\n  \"cantidad\": 5,\n  \"motivo\": \"Compra a proveedor\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Alertas de stock",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/inventario/alertas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "inventario",
+            "alertas"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Registrar venta manual",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/ventas",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "ventas"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": [\n    {\n      \"id_producto\": 1,\n      \"cantidad\": 2\n    }\n  ],\n  \"metodo_pago\": \"efectivo\",\n  \"clave_idempotencia\": \"postman-0001\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Historial de ventas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/ventas?canal=voz",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "ventas?canal=voz"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Voz: interpretar texto",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/voz/interpretar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "voz",
+            "interpretar"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"texto\": \"vender dos Coca-Cola\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const r = pm.response.json();",
+              "if (r.id_pedido) pm.collectionVariables.set('idPedido', r.id_pedido);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Voz: confirmar pedido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/voz/pedidos/{{idPedido}}/confirmar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "voz",
+            "pedidos",
+            "{{idPedido}}",
+            "confirmar"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"metodo_pago\": \"efectivo\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Voz: cancelar pedido",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/voz/pedidos/{{idPedido}}/cancelar",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "voz",
+            "pedidos",
+            "{{idPedido}}",
+            "cancelar"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{}"
+        }
+      }
+    },
+    {
+      "name": "Reporte: ventas por día (admin)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/reportes/ventas?agrupar=dia",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "reportes",
+            "ventas?agrupar=dia"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Reporte: indicadores de voz (admin)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/reportes/voz",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "reportes",
+            "voz"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Configuración",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/configuracion",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "configuracion"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Inventario valorado (detalle)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/reportes/inventario-detalle",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "reportes",
+            "inventario-detalle"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Inventario valorado (CSV)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/reportes/inventario.csv",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "reportes",
+            "inventario.csv"
+          ]
+        }
+      }
+    }
+  ]
+}
